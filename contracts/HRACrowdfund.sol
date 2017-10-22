@@ -9,7 +9,7 @@ contract HRACrowdfund {
 
     HRAToken public token;
     
-    uint256 public founderMulSigAddress;
+    address public founderMulSigAddress;
     uint256 public exchangeRate;
     uint256 public ethRaised;
     bool private tokenDeployed = false;
@@ -111,7 +111,7 @@ contract HRACrowdfund {
     isTokenDeployed
     return bool
     {
-        if(_value == o)
+        if(_value == 0)
             return false;
 
         require(checkExistence(_beneficiary));
