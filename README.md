@@ -1,5 +1,5 @@
-# HRAsentToken
-Token
+# HRAToken
+An ERC20 Ethereum based Token
 
 
 Creation of Ethereum Token with this option:
