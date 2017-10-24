@@ -88,7 +88,7 @@ contract HRACrowdfund {
     public
     returns (bool)
     {
-        uint256 amount = msg.value * exchangeRate;
+        uint256 amount = (msg.value.mul(exchangeRate)).div(10 ** 8);
        
         require(checkExistence(_beneficiary));
 
