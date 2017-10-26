@@ -13,7 +13,6 @@ contract HRAToken is BasicToken {
     uint256 public initialSupply = 30000000 * 10**10;             //total supply of Tokens
 
     //variables
-    uint256 public foundersAllocation;                           //fund allocated to founders
     uint256 public totalAllocatedTokens;                         //variable to keep track of funds allocated
     uint256 public tokensAllocatedToCrowdFund;                   //funds allocated to crowdfund
 

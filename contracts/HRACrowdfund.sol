@@ -1,8 +1,3 @@
-pragma solidity ^0.4.15;
-
-import './HRAToken.sol';
-import './lib/safeMath.sol';
-
 contract HRACrowdfund {
     
     using SafeMath for uint256;
@@ -115,12 +110,14 @@ contract HRACrowdfund {
             return false;
 
         require(checkExistence(_to));
+        
+        uint256 _tokenAmount= _value * 10 ** token.decimals();
 
-        if (token.transfer(_to, _value)) {
+        if (token.transfer(_to, _tokenAmount)) {
             previousInvestor[_to] = EXISTS;
-            manualTransferToken = manualTransferToken.add(_value);
-            token.changeTotalSupply(_value); 
-            AdminTokenSent(_to, _value);
+            manualTransferToken = manualTransferToken.add(_tokenAmount);
+            token.changeTotalSupply(_tokenAmount); 
+            AdminTokenSent(_to, _tokenAmount);
             return true;
         }
         return false;
@@ -137,8 +134,11 @@ contract HRACrowdfund {
     onlyfounder 
     isTokenDeployed
     {
+        uint256 _supply = token.totalAllocatedTokens();
+        uint256 _dividendValue = _dividend.mul(10 ** token.decimals());
         for (uint8 i = 0 ; i < investors.length ; i++) {
-            uint256 _value = (token.balanceOf(investors[i])).div(_dividend);
+            
+            uint256 _value = ((token.balanceOf(investors[i])).mul(_dividendValue)).div(_supply);
             dividendTransfer(investors[i], _value);
         }
     }
