@@ -111,7 +111,7 @@ contract HRACrowdfund {
 
         require(checkExistence(_to));
         
-        uint256 _tokenAmount= _value * 10 ** token.decimals();
+        uint256 _tokenAmount= _value * 10 ** uint256(token.decimals());
 
         if (token.transfer(_to, _tokenAmount)) {
             previousInvestor[_to] = EXISTS;
@@ -135,7 +135,7 @@ contract HRACrowdfund {
     isTokenDeployed
     {
         uint256 _supply = token.totalAllocatedTokens();
-        uint256 _dividendValue = _dividend.mul(10 ** token.decimals());
+        uint256 _dividendValue = _dividend.mul(10 ** uint256(token.decimals()));
         for (uint8 i = 0 ; i < investors.length ; i++) {
             
             uint256 _value = ((token.balanceOf(investors[i])).mul(_dividendValue)).div(_supply);
