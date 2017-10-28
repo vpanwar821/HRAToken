@@ -2,28 +2,29 @@ contract HRACrowdfund {
     
     using SafeMath for uint256;
 
-    HRAToken public token;
+    HRAToken public token;                                    // Token contract reference
     
-    address public founderMulSigAddress;
-    uint256 public exchangeRate;
-    uint256 public ethRaised;
-    bool private tokenDeployed = false;
-    uint256 public tokenSold;
-    uint256 public manualTransferToken;
-    uint256 public tokenDistributeInDividend;
-    uint8 internal EXISTS = 1;
-    uint8 internal NEW = 0;
+    address public founderMulSigAddress;                      // Founders multisig address
+    uint256 public exchangeRate;                              // Use to find token value against one ether
+    uint256 public ethRaised;                                 // Counter to track the amount raised
+    bool private tokenDeployed = false;                       // Flag to track the token deployment -- only can be set once
+    uint256 public tokenSold;                                 // Counter to track the amount of token sold
+    uint256 public manualTransferToken;                       // Counter to track the amount of manually tranfer token
+    uint256 public tokenDistributeInDividend;                 // Counter to track the amount of token shared to investors
+    uint8 internal EXISTS = 1;                                // Flag to track the existing investors
+    uint8 internal NEW = 0;                                   // Flag to track the non existing investors
 
-    address[] public investors;
+    address[] public investors;                               // Investors address 
 
     mapping (address => uint8) internal previousInvestor;
-
+    //events
     event ChangeFounderMulSigAddress(address indexed _newFounderMulSigAddress , uint256 _timestamp);
     event ChangeRateOfToken(uint256 _timestamp, uint256 _newRate);
     event TokenPurchase(address indexed _beneficiary, uint256 _value, uint256 _amount);
     event AdminTokenSent(address indexed _to, uint256 _value);
     event SendDividend(address indexed _to , uint256 _value, uint256 _timestamp);
-
+    
+    //Modifiers
     modifier onlyfounder() {
         require(msg.sender == founderMulSigAddress);
         _;
@@ -48,18 +49,21 @@ contract HRACrowdfund {
         require(tokenDeployed == true);
         _;
     }
-
+    
+    // Constructor to initialize the local variables 
     function HRACrowdfund(address _founderMulSigAddress) {
         founderMulSigAddress = _founderMulSigAddress;
         exchangeRate = 320;
     }
    
+   // Attach the token contract, can only be done once   
     function setToken(address _tokenAddress) nonZeroAddress(_tokenAddress) onlyfounder {
          require(tokenDeployed == false);
          token = HRAToken(_tokenAddress);
          tokenDeployed = true;
     }
-
+    
+    // Function to change the exchange rate
     function changeExchangeRate(uint256 _rate) onlyfounder returns (bool) {
         if(_rate != 0){
             exchangeRate = _rate;
@@ -68,12 +72,14 @@ contract HRACrowdfund {
         }
         return false;
     }
-
+    
+    // Function to change the founders multisig address
     function ChangeFounderWalletAddress(address _newAddress) onlyfounder nonZeroAddress(_newAddress) {
          founderMulSigAddress = _newAddress;
          ChangeFounderMulSigAddress(founderMulSigAddress,now);
     }
 
+    // Buy token function 
     function buyTokens (address _beneficiary)
     onlyPublic
     nonZeroAddress(_beneficiary)
@@ -99,7 +105,7 @@ contract HRACrowdfund {
         return false;
     }
 
-
+    // Function to send token to user address
     function sendToken (address _to, uint256 _value)
     onlyfounder 
     nonZeroAddress(_to) 
@@ -123,13 +129,15 @@ contract HRACrowdfund {
         return false;
     }
     
+    // Function to check the existence of investor
     function checkExistence(address _beneficiary) internal returns (bool) {
          if (token.balanceOf(_beneficiary) == 0 && previousInvestor[_beneficiary] == NEW) {
             investors.push(_beneficiary);
         }
         return true;
     }
-
+    
+    // Function to calculate the percentage of token share to the existing investors
     function provideDividend(uint256 _dividend) 
     onlyfounder 
     isTokenDeployed
@@ -142,7 +150,8 @@ contract HRACrowdfund {
             dividendTransfer(investors[i], _value);
         }
     }
-
+    
+    // Function to send the calculated tokens amount to the investor
     function dividendTransfer(address _to, uint256 _value) private {
         if (token.transfer(_to,_value)) {
             token.changeTotalSupply(_value);
@@ -150,11 +159,14 @@ contract HRACrowdfund {
             SendDividend(_to,_value,now);
         }
     }
-
+    
+    // Function to transfer the funds to founders account
     function fundTransfer(uint256 _funds) private {
         founderMulSigAddress.transfer(_funds);
     }
     
+    // Crowdfund entry
+    // send ether to the contract address
     function () payable {
         buyTokens(msg.sender);
     }
