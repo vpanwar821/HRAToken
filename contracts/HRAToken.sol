@@ -45,7 +45,7 @@ contract HRAToken is BasicToken {
         crowdFundAddress = _crowdFundAddress;
         founderMultiSigAddress = _founderMultiSigAddress;
 
-        // Assigned balances to founder 
+        // Assigned balances to crowdfund
         balances[crowdFundAddress] = initialSupply;
     }
 
