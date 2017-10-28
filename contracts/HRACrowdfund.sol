@@ -1,3 +1,8 @@
+pragma solidity ^0.4.15;
+
+import './helpers/BasicToken.sol';
+import './HRAToken.sol';
+
 contract HRACrowdfund {
     
     using SafeMath for uint256;
