@@ -10,14 +10,14 @@ contract HRAToken is BasicToken {
     string public name = "HERA";                                //name of the token
     string public symbol = "HRA";                               //symbol of the token
     uint8 public decimals = 10;                                 //decimals
-    uint256 public initialSupply = 30000000 * 10**10;             //total supply of Tokens
+    uint256 public initialSupply = 30000000 * 10**10;           //total supply of Tokens
 
     //variables
     uint256 public totalAllocatedTokens;                         //variable to keep track of funds allocated
     uint256 public tokensAllocatedToCrowdFund;                   //funds allocated to crowdfund
 
     //addresses
-    address public founderMultiSigAddress;                      //Multi sign address of founders which hold
+    address public founderMultiSigAddress;                      //Multi sign address of founder
     address public crowdFundAddress;                            //Address of crowdfund contract
 
     //events
